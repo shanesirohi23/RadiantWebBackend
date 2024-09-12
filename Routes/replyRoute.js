@@ -1,10 +1,12 @@
-const express = require ('express');
+const express = require('express');
 const isAuthenticated = require('../Middlewares/isAuthenticated');
-const { postReply,deleteReply } = require('../Controllers/replyController');
-const replyRouter= new express.Router();
+const { postReply, deleteReply } = require('../Controllers/replyController');
+const replyRouter = new express.Router();
 
+// Post a reply
+replyRouter.post('/reply/:id', isAuthenticated, postReply);
 
-// replyRouter.get('/api/v1/post/:postid/replies', getPostReply)
-replyRouter.post('/api/v1/reply/:id', isAuthenticated, postReply)
-replyRouter.delete('/api/v1/post/:id/reply/:replyid', isAuthenticated, deleteReply)
-module.exports=replyRouter
+// Delete a reply
+replyRouter.delete('/post/:id/reply/:replyid', isAuthenticated, deleteReply);
+
+module.exports = replyRouter;

@@ -14,12 +14,25 @@ const multer = require("multer");
 const { storage } = require("../utils/configCloudinary");
 const upload = multer({ storage: storage });
 
-postRouter.get("/api/v1/post/:id", getSinglePost);
-postRouter.get("/api/v1/timeline", getAllPost);
-postRouter.get("/api/v1/post/user/:username", getUserPost);
-postRouter.post( "/api/v1/post/create", isAuthenticated, upload.single("postImage"),createPost);
-postRouter.put("/api/v1/post/:id", isAuthenticated, editPost);
-postRouter.delete("/api/v1/post/:id", isAuthenticated, deletePost);
-postRouter.post("/api/v1/like/:id", isAuthenticated, likeUnlikePost);
+// Get single post
+postRouter.get("/post/:id", getSinglePost);
+
+// Get all posts (timeline)
+postRouter.get("/timeline", getAllPost);
+
+// Get posts of a specific user
+postRouter.get("/post/user/:username", getUserPost);
+
+// Create a post
+postRouter.post("/post/create", isAuthenticated, upload.single("postImage"), createPost);
+
+// Edit a post
+postRouter.put("/post/:id", isAuthenticated, editPost);
+
+// Delete a post
+postRouter.delete("/post/:id", isAuthenticated, deletePost);
+
+// Like/Unlike a post
+postRouter.post("/like/:id", isAuthenticated, likeUnlikePost);
 
 module.exports = postRouter;
