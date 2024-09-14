@@ -5,7 +5,7 @@ const multer = require('multer');
 const { storage } = require('../utils/configCloudinary');
 const upload = multer({ storage: storage });
 
-const userRouter = new express.Router();
+const userRouter = express.Router();
 
 // Get user
 userRouter.get('/user/:query', getUser);

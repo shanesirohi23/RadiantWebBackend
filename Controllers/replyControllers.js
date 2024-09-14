@@ -21,19 +21,19 @@ const postReply = async (req, res) => {
     await post.save();
     return res.status(200).json({ message: "Reply posted successfully" });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ message: error.message });
+    console.error("Error in postReply:", error.message);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 const deleteReply = async (req, res) => {
-  let { id, replyid } = req.params;
+  let { id, replyId } = req.params;
   try {
     let post = await Post.findById(id);
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
     }
-    let reply = await Reply.findById(replyid);
+    let reply = await Reply.findById(replyId);
     if (!reply) {
       return res.status(404).json({ error: "Reply not found" });
     }
@@ -41,12 +41,12 @@ const deleteReply = async (req, res) => {
       return res.status(403).json({ error: "You are not authorized to delete this reply" });
     }
     await reply.remove();
-    post.replies.pull(replyid);
+    post.replies.pull(replyId);
     await post.save();
     return res.status(200).json({ message: "Reply deleted successfully" });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ message: error.message });
+    console.error("Error in deleteReply:", error.message);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 

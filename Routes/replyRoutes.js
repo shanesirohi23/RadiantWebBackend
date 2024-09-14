@@ -1,7 +1,7 @@
 const express = require('express');
 const isAuthenticated = require('../Middlewares/isAuthenticated');
 const { postReply, deleteReply } = require('../Controllers/replyControllers');
-const replyRouter = new express.Router();
+const replyRouter = express.Router();
 
 // Post a reply
 replyRouter.post('/reply/:id', isAuthenticated, postReply);

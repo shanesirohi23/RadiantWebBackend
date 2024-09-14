@@ -19,7 +19,7 @@ mongoose
 const cookieParser = require("cookie-parser");
 const userRouter = require("./Routes/userRoutes");
 const postRouter = require("./Routes/postRoutes");
-const replyRouter = require("./Routes/replyRoute");
+const replyRouter = require("./Routes/replyRoutes");
 
 // Middleware
 app.use(cors());  // Enable CORS for all origins

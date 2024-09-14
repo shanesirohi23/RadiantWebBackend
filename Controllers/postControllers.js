@@ -1,6 +1,7 @@
 const Post = require("../Models/postModel");
 const User = require("../Models/userModel");
 
+// Create a post
 const createPost = async (req, res) => {
   try {
     let { posttext } = req.body;
@@ -32,6 +33,7 @@ const createPost = async (req, res) => {
   }
 };
 
+// Get single post
 const getSinglePost = async (req, res) => {
   let { id } = req.params;
   try {
@@ -54,6 +56,7 @@ const getSinglePost = async (req, res) => {
   }
 };
 
+// Get all posts (timeline)
 const getAllPosts = async (req, res) => {
   try {
     let allPosts = await Post.find({}).sort({ createdAt: -1 }).populate('author');
@@ -67,6 +70,23 @@ const getAllPosts = async (req, res) => {
   }
 };
 
+// Get posts of a specific user
+const getUserPosts = async (req, res) => {
+  let { username } = req.params;
+  try {
+    let user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    let posts = await Post.find({ author: user._id }).sort({ createdAt: -1 });
+    return res.status(200).json(posts);
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Edit a post
 const editPost = async (req, res) => {
   let { id } = req.params;
   let { posttext } = req.body;
@@ -87,6 +107,7 @@ const editPost = async (req, res) => {
   }
 };
 
+// Delete a post
 const deletePost = async (req, res) => {
   let { id } = req.params;
   try {
@@ -105,6 +126,7 @@ const deletePost = async (req, res) => {
   }
 };
 
+// Like/Unlike a post
 const likeUnlikePost = async (req, res) => {
   let { id } = req.params;
   try {
@@ -135,6 +157,7 @@ module.exports = {
   createPost,
   getSinglePost,
   getAllPosts,
+  getUserPosts,
   editPost,
   deletePost,
   likeUnlikePost

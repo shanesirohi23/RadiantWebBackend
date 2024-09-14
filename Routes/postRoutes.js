@@ -1,5 +1,5 @@
 const express = require('express');
-const postRouter = new express.Router();
+const postRouter = express.Router();
 const isAuthenticated = require('../Middlewares/isAuthenticated');
 const {
   createPost,

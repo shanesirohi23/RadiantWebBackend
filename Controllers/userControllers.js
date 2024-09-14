@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../Models/userModel");
 const genjwttoken = require("../utils/genjwttoken");
-const { isValidObjectId } = require("mongoose");
 
 const registerUser = async (req, res) => {
   let { name, username, email, password } = req.body;
@@ -53,7 +52,88 @@ const loginUser = async (req, res) => {
   }
 };
 
+const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error in logout:", error.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const followUnfollowUser = async (req, res) => {
+  let { id } = req.params;
+  try {
+    let user = req.user;
+    let targetUser = await User.findById(id);
+    if (!targetUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (user.following.includes(id)) {
+      user.following.pull(id);
+      targetUser.followers.pull(user._id);
+      await user.save();
+      await targetUser.save();
+      return res.status(200).json({ message: "Unfollowed successfully" });
+    } else {
+      user.following.push(id);
+      targetUser.followers.push(user._id);
+      await user.save();
+      await targetUser.save();
+      return res.status(200).json({ message: "Followed successfully" });
+    }
+  } catch (error) {
+    console.error("Error in follow/unfollow:", error.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const updateUser = async (req, res) => {
+  let { id } = req.params;
+  let { name, email } = req.body;
+  try {
+    if (req.user._id.toString() !== id) {
+      return res.status(403).json({ error: "You cannot update someone else's profile" });
+    }
+    let updatedUser = await User.findByIdAndUpdate(id, { name, email }, { new: true });
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error in updateUser:", error.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getUser = async (req, res) => {
+  let { query } = req.params;
+  try {
+    let user = await User.findOne({ username: query }).select("-password");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error in getUser:", error.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getAllUsers = async (req, res) => {
+  try {
+    let users = await User.find().select("-password");
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Error in getAllUsers:", error.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  logoutUser,
+  followUnfollowUser,
+  updateUser,
+  getUser,
+  getAllUsers
 };
